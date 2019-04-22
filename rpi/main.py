@@ -1,6 +1,6 @@
 '''
- 1 Escuchar mensajes MQTT
- El mensaje es del tipo id/timestamp/temperatura/humedad
+ 1 Escuchar mensajes MQTT (listo)
+ El mensaje es del tipo JSON 
  2 Guardar datos en archivo CSV
  3 Valida conexion a internet 
      si no hay, guardar datos en TXT de respaldo
@@ -10,8 +10,10 @@
 
 import ssl
 import sys
- 
 import paho.mqtt.client as mqtt
+import txtFile
+import csvFile
+import timeData
  
 def on_connect(client, userdata, flags, rc):
     print('connected (%s)' % client._client_id)
@@ -21,7 +23,23 @@ def on_message(client, userdata, message):
     print('------------------------------')
     print('topic: %s' % message.topic)
     print('payload: %s' % message.payload)
-    print('qos: %d' % message.qos)
+    print(client)
+    auxMessage = message.payload.split("/")
+    dataCurrent = {
+        'position': str(message.topic),
+        'timestamp': timeData.getTimestamp(),
+        'temp': auxMessage[0],
+        'hum': auxMessage[1]
+    }
+    print dataCurrent
+    dataBack = txtFile.getDate()
+    # Crear nuevo archivo si no hay datos creados o la fecha actual es diferente a la fecha almacenada
+    if len(dataBack) == 0 or dataBack[0] != timeData.getCurrentDateSTR():
+        csvFile.createFile(txtFile.newDay(timeData.getCurrentTimeSTR()),message.payload)
+    # en caso contrario, escribir el dato en el archivo CSV.
+    else:
+        csvFile.writeData(dataBack[1], message.payload)
+
 
 def on_publish(mqttc, obj, mid):
     print("mid: " + str(mid))
