@@ -1,6 +1,6 @@
 # Abrir archivo de respaldo y consultar fecha y nombre
 def getDate():
-    # Almacenar en array data [date:xxxx, name:yyyy]
+    # Almacenar en array data [date, name]
     data = []
     # Abrir archivo y recorrer sus dos lineas para agregarlas a data
     f = open("back.txt")
@@ -17,8 +17,8 @@ def newDay(date):
     name = "testSensores_" + str(date) + ".csv\n"
     # Abrir archivo de respaldo y actualizar información
     f = open("back.txt","w")
-    f.write("date:" + str(date) + "\n")
-    f.write("name:" + name)
+    f.write(str(date) + "\n")
+    f.write(name)
     # Cerrar archivo y retornar nombre para almacenar sensores
     f.close()
     return name
