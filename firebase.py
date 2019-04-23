@@ -3,7 +3,7 @@ from firebase_admin import credentials
 from firebase_admin import db
 import json
 
-cred = credentials.Certificate('/home/pi/construccion/BACK/names.json')
+cred = credentials.Certificate('./testInvernadero.json')
 default_app = firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://construccion-30739.firebaseio.com/'
 })
