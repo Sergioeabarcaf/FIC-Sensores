@@ -21,24 +21,30 @@ def on_connect(client, userdata, flags, rc):
  
 def on_message(client, userdata, message):
     print('------------------------------')
-    print('topic: %s' % message.topic)
-    print('payload: %s' % message.payload)
-    print(client)
+    # Descomponer topic para obtener locacion e ID del dispositivo
+    auxTopic = message.topic.split(":")
+    # Descomponer mensaje para obtener temperatura y humedad
     auxMessage = message.payload.split("/")
+    # Crear diccionario con informacion a almacenar
     dataCurrent = {
-        'position': str(message.topic),
+        'id': int(auxTopic[1]),
+        'position': str(auxTopic[0]),
         'timestamp': timeData.getTimestamp(),
-        'temp': auxMessage[0],
-        'hum': auxMessage[1]
+        'tem': int(auxMessage[0]),
+        'hum': int(auxMessage[1])
     }
     print dataCurrent
+    # Obtener informacion sobre archivo de respaldo
     dataBack = txtFile.getDate()
     # Crear nuevo archivo si no hay datos creados o la fecha actual es diferente a la fecha almacenada
     if len(dataBack) == 0 or dataBack[0] != timeData.getCurrentDateSTR():
-        csvFile.createFile(txtFile.newDay(timeData.getCurrentTimeSTR()),message.payload)
+        # Escribir datos de dataCurrent en archivo CSV creado
+        print("Se crea nuevo archivo")
+        csvFile.createFile(txtFile.newDay(timeData.getCurrentDateSTR()),dataCurrent)
     # en caso contrario, escribir el dato en el archivo CSV.
     else:
-        csvFile.writeData(dataBack[1], message.payload)
+        # Escribir datos de dataCurrent en CSV
+        csvFile.writeData(dataBack[1], dataCurrent)
 
 
 def on_publish(mqttc, obj, mid):

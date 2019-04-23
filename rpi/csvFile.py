@@ -1,6 +1,6 @@
 import csv
 
-fieldNames = ['id', 'position', 'timestamp', 'T°', 'H°']
+fieldNames = ['id','position','timestamp','tem','hum']
 
 # Crear nuevo archivo de datos CSV y almacenar nuevos datos.
 def createFile(nameFile, data):
