@@ -1,0 +1,10 @@
+# ignorar los archivos locales
+*.pyc
+*.txt
+*.csv
+
+# ignorar archivos de edición
+.vscode/*
+
+# ignorar firebase
+*firebase*
