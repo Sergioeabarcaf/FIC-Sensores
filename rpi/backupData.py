@@ -7,10 +7,6 @@ path = "./backup.txt"
 def saveBackup(data):
     # Abrir archivo de respaldo y agregar data en formato string al final
     f = open(path, "a")
-    # Flags para testeo
-    print data
-    print type(data)
-    print json.dumps(data)
     f.write(json.dumps(data) + "\n")
     f.close()
 
@@ -25,7 +21,6 @@ def loadBackup():
             # Eliminar los saltos de linea de cada dato y convertirlos a json
             data.append(json.loads(str(line).replace("\n","")))
         f.close()
-        print data
         # validar el largo de los datos antes de responder, si esta vacio, retornar false
         if len(data) > 0:
             return data

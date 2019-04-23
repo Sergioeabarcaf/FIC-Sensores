@@ -7,14 +7,14 @@ import timeData
 import conection
 import backupData
 import firebase
+
+topics = ['invernadero/#', 'germinadora/#']
  
 def on_connect(client, userdata, flags, rc):
-    print('connected (%s)' % client._client_id)
-    client.subscribe(topic='invernadero/#', qos=2)
+    client.subscribe(topic=topics, qos=2)
  
 def on_message(client, userdata, message):
     # ======================================================
-    print('------------------------------')
     # Descomponer topic para obtener locacion e ID del dispositivo
     auxTopic = message.topic.split(":")
     # Descomponer mensaje para obtener temperatura y humedad
@@ -47,12 +47,9 @@ def on_message(client, userdata, message):
         firebase.save(dataCurrent)
         # revisar si existen datos en archivo de respaldo
         lis = backupData.loadBackup()
-        print("Revisando backup")
-        print(lis)
         if lis != False:
             # Recorrer array con datos y almacenarlos en firebase
             for i in lis:
-                print i
                 firebase.save(i)
             # Limpiar archivo de backup
             backupData.clean()
@@ -60,13 +57,8 @@ def on_message(client, userdata, message):
         # almacenar dato de respaldo
         backupData.saveBackup(dataCurrent)
 
-def on_publish(mqttc, obj, mid):
-    print("mid: " + str(mid))
-
-
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
-client.on_publish = on_publish
 client.connect(host='192.168.1.123', port=1883)
 client.loop_forever()
