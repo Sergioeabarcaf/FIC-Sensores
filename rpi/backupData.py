@@ -25,9 +25,9 @@ def loadBackup():
             # Eliminar los saltos de linea de cada dato y convertirlos a json
             data.append(json.loads(str(line).replace("\n","")))
         f.close()
+        print data
         # validar el largo de los datos antes de responder, si esta vacio, retornar false
         if len(data) > 0:
-            print data
             return data
         else:
             return False

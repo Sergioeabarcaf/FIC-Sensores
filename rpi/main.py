@@ -1,13 +1,3 @@
-'''
- 1 Escuchar mensajes MQTT (listo)
- El mensaje es del tipo JSON 
- 2 Guardar datos en archivo CSV
- 3 Valida conexion a internet 
-     si no hay, guardar datos en TXT de respaldo
-     Si hay y el TXT de respaldo no tiene dato, descomponer mensaje y acomodarlo a la estructura para Firebase y enviarlos.
-     Si hay y el TXT de respaldo tiene datos, recorrer el CSV y enviar los datos a firebase
-'''
-
 import ssl
 import sys
 import paho.mqtt.client as mqtt
@@ -57,9 +47,12 @@ def on_message(client, userdata, message):
         firebase.save(dataCurrent)
         # revisar si existen datos en archivo de respaldo
         lis = backupData.loadBackup()
+        print("Revisando backup")
+        print(lis)
         if lis != False:
             # Recorrer array con datos y almacenarlos en firebase
             for i in lis:
+                print i
                 firebase.save(i)
     else:
         # almacenar dato de respaldo
