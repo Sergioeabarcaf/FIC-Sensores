@@ -10,5 +10,7 @@ default_app = firebase_admin.initialize_app(cred, {
 
 # Funcion que almacena un nuevo dato en Firebase
 def save(data):
+    dir = 'data/' + str(data["position"]) + "/id" + str(data["id"])
+    print dir
     print data
-    print (db.reference('data').push(data))
+    print (db.reference(dir).set(data))
