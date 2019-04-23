@@ -7,5 +7,3 @@
 # ignorar archivos de edición
 .vscode/*
 
-# ignorar firebase
-*firebase*

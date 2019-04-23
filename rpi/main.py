@@ -15,6 +15,8 @@ import txtFile
 import csvFile
 import timeData
 import conection
+import backupData
+import firebase
  
 def on_connect(client, userdata, flags, rc):
     print('connected (%s)' % client._client_id)
@@ -42,21 +44,26 @@ def on_message(client, userdata, message):
     # Crear nuevo archivo si no hay datos creados o la fecha actual es diferente a la fecha almacenada
     if len(dataBack) == 0 or dataBack[0] != timeData.getCurrentDateSTR():
         # Escribir datos de dataCurrent en archivo CSV creado
-        print("Se crea nuevo archivo")
         csvFile.createFile(txtFile.newDay(timeData.getCurrentDateSTR()),dataCurrent)
     # en caso contrario, escribir el dato en el archivo CSV.
     else:
         # Escribir datos de dataCurrent en CSV
         csvFile.writeData(dataBack[1], dataCurrent)
+
     # ======================================================
     # Validar conexión a internet, si no hay, se almacena el mensaje en backup de respaldo
     if conection.valid():
-        print("hola")
         # Enviar dato a firebase
+        firebase.save(dataCurrent)
         # revisar si existen datos en archivo de respaldo
+        lis = backupData.loadBackup()
+        if lis != False:
+            # Recorrer array con datos y almacenarlos en firebase
+            for i in lis:
+                firebase.save(i)
     else:
         # almacenar dato de respaldo
-        print("hola")
+        backupData.saveBackup(dataCurrent)
 
 def on_publish(mqttc, obj, mid):
     print("mid: " + str(mid))

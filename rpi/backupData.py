@@ -27,6 +27,7 @@ def loadBackup():
         f.close()
         # validar el largo de los datos antes de responder, si esta vacio, retornar false
         if len(data) > 0:
+            print data
             return data
         else:
             return False
