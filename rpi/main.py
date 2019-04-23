@@ -7,11 +7,9 @@ import timeData
 import conection
 import backupData
 import firebase
-
-topics = ['invernadero/#', 'germinadora/#']
  
 def on_connect(client, userdata, flags, rc):
-    client.subscribe(topic=topics, qos=2)
+    client.subscribe(topic='invernadero/#', qos=2)
  
 def on_message(client, userdata, message):
     # ======================================================
