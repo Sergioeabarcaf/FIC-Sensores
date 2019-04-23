@@ -5,8 +5,8 @@ path = "./backup.txt"
 
 # Funcion para almacenar datos de respaldo
 def saveBackup(data):
-    # Abrir archivo de respaldo y almacenar data en formato string
-    f = open(path, "w")
+    # Abrir archivo de respaldo y agregar data en formato string al final
+    f = open(path, "a")
     # Flags para testeo
     print data
     print type(data)
