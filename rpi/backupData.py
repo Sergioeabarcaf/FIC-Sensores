@@ -33,3 +33,9 @@ def loadBackup():
             return False
     else:
         return False
+
+# Funcion para limpiar archivo backup
+def clean():
+    f = open(path,"w")
+    f.write("")
+    f.close()

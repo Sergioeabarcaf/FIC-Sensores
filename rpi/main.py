@@ -54,6 +54,8 @@ def on_message(client, userdata, message):
             for i in lis:
                 print i
                 firebase.save(i)
+            # Limpiar archivo de backup
+            backupData.clean()
     else:
         # almacenar dato de respaldo
         backupData.saveBackup(dataCurrent)
