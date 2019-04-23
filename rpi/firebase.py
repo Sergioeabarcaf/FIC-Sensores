@@ -13,4 +13,4 @@ def save(data):
     dir = 'data/' + str(data["position"]) + "/id" + str(data["id"])
     print dir
     print data
-    print (db.reference(dir).set(data))
+    db.reference(dir).set(data)
