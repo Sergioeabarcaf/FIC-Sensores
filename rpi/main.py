@@ -37,7 +37,6 @@ def on_message(client, userdata, message):
         'tem': int(auxMessage[0]),
         'hum': int(auxMessage[1])
     }
-    print dataCurrent
 
     # ======================================================
     # Obtener informacion sobre archivo de respaldo
