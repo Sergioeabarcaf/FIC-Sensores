@@ -5,7 +5,7 @@ import json
 
 cred = credentials.Certificate('./testInvernadero.json')
 default_app = firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://construccion-30739.firebaseio.com/'
+    'databaseURL': 'https://fic-testinvernadero.firebaseio.com/'
 })
 
 # Funcion que almacena un nuevo dato en Firebase

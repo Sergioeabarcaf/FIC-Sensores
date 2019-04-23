@@ -51,7 +51,7 @@ def on_message(client, userdata, message):
         csvFile.writeData(dataBack[1], dataCurrent)
 
     # ======================================================
-    # Validar conexión a internet, si no hay, se almacena el mensaje en backup de respaldo
+    # Validar conexion a internet, si no hay, se almacena el mensaje en backup de respaldo
     if conection.valid():
         # Enviar dato a firebase
         firebase.save(dataCurrent)
