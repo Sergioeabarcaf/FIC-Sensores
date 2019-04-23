@@ -1,5 +1,6 @@
 import socket
 
+# Funcion que devuelve true si existe conexión a google o false en caso contrario
 def valid():
     test = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:

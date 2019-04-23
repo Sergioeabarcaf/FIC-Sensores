@@ -14,12 +14,14 @@ import paho.mqtt.client as mqtt
 import txtFile
 import csvFile
 import timeData
+import conection
  
 def on_connect(client, userdata, flags, rc):
     print('connected (%s)' % client._client_id)
     client.subscribe(topic='invernadero/#', qos=2)
  
 def on_message(client, userdata, message):
+    # ======================================================
     print('------------------------------')
     # Descomponer topic para obtener locacion e ID del dispositivo
     auxTopic = message.topic.split(":")
@@ -33,7 +35,8 @@ def on_message(client, userdata, message):
         'tem': int(auxMessage[0]),
         'hum': int(auxMessage[1])
     }
-    print dataCurrent
+
+    # ======================================================
     # Obtener informacion sobre archivo de respaldo
     dataBack = txtFile.getDate()
     # Crear nuevo archivo si no hay datos creados o la fecha actual es diferente a la fecha almacenada
@@ -45,11 +48,20 @@ def on_message(client, userdata, message):
     else:
         # Escribir datos de dataCurrent en CSV
         csvFile.writeData(dataBack[1], dataCurrent)
-
+    # ======================================================
+    # Validar conexión a internet, si no hay, se almacena el mensaje en backup de respaldo
+    if conection.valid():
+        print("hola")
+        # Enviar dato a firebase
+        # revisar si existen datos en archivo de respaldo
+    else:
+        # almacenar dato de respaldo
+        print("hola")
 
 def on_publish(mqttc, obj, mid):
     print("mid: " + str(mid))
- 
+
+
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
