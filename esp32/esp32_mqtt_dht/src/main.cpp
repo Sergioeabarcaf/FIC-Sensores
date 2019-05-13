@@ -18,7 +18,8 @@ So it willpublish temperature topic and scribe topic bulb on/off
 #define WIFI_PASSWORD "protein-dis3d"
 /***************Factores para Sleep*******************************************/
 #define uS_TO_S_FACTOR 1000000  /* Conversion factor for micro seconds to seconds */
-#define TIME_TO_SLEEP  3000        /* Time ESP32 will go to sleep (in seconds) */
+#define TIME_TO_SLEEP  30        /* Time ESP32 will go to sleep (in seconds) */
+
 
 /* this is the IP of PC/raspberry where you installed MQTT Server
 on Wins use "ipconfig"
@@ -40,21 +41,20 @@ PubSubClient client(espClient);
 const char led = 12;
 
 /* topics */
-#define TOPIC    "proteinlab/design/id1"
+// El topico debe ser invernadero/"zona":"numero del dispositivo"
+#define TOPIC    "invernadero/design:1"
 // #define HUM_TOPIC     "dato/esp32_01/hum"
 
 long lastMsg = 0;
 char msg[10];
-char mt[9];
-char mh[9];
 
 void receivedCallback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Message received: ");
+  Serial.println("Message received: ");
   Serial.println(topic);
 
-  Serial.print("payload: ");
+  Serial.println("payload: ");
   for (int i = 0; i < length; i++) {
-    Serial.print((char)payload[i]);
+    Serial.println((char)payload[i]);
   }
   Serial.println();
   /* we got '1' -> on */
@@ -70,7 +70,7 @@ void receivedCallback(char* topic, byte* payload, unsigned int length) {
 void mqttconnect() {
   /* Loop until reconnected */
   while (!client.connected()) {
-    Serial.print("MQTT connecting ...");
+    Serial.println("MQTT connecting ...");
     /* client ID */
     String clientId = "ESP32Client";
     /* connect now */
@@ -79,14 +79,13 @@ void mqttconnect() {
       /* subscribe topic with default QoS 0*/
       //client.subscribe(LED_TOPIC);
     } else {
-      Serial.print("failed, status code =");
-      Serial.print(client.state());
+      Serial.println("failed, status code =");
+      Serial.println(client.state());
       Serial.println("try again in 5 seconds");
       /* Wait 5 seconds before retrying */
       delay(5000);
     }
   }
-  Serial.print("YA se conecto a MQTT");
 }
 
 void setup()
@@ -94,7 +93,7 @@ void setup()
   Serial.begin(115200);
   // We start by connecting to a WiFi network
   Serial.println();
-  Serial.print("Connecting to ");
+  Serial.println("Connecting to ");
   Serial.println(WIFI_SSID);
 
   //WiFi.begin(ssid, password);
@@ -120,67 +119,36 @@ void setup()
   client.setCallback(receivedCallback);
   /*start DHT sensor */
   dht.begin();
-  Serial.print("YA configuro DHT");
 
   esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
-  Serial.print("Luego del sleep enable");
   delay(500);
 
 }
 void loop()
 {
-  Serial.print("Entro al loop");
   /* if client was disconnected then try to reconnect again */
   if (!client.connected())
   {
-    Serial.print("No esta concetado a mqtt en el loop");
+    Serial.println("No esta concetado a mqtt en el loop");
     mqttconnect();
-    Serial.print("Ya se conecto en el loop");
   }
   /* this function will listen for incomming
   subscribed topic-process-invoke receivedCallback */
   client.loop();
   /* we measure temperature every 3 secs
   we count until 3 secs reached to avoid blocking program if using delay()*/
-  long now = millis();
-  Serial.print(now);
-  if (now - lastMsg > 3000)
+  /* read DHT11/DHT22 sensor and convert to string */
+  temperatura = dht.readTemperature();
+  humedad = dht.readHumidity();
+  if (!isnan(temperatura))
   {
-    Serial.print("Entro despues de dormir");
-    lastMsg = now;
-    /* read DHT11/DHT22 sensor and convert to string */
-    temperatura = dht.readTemperature();
-    humedad = dht.readHumidity();
-    if (!isnan(temperatura))
-    {
-      Serial.println("Obteniendo datos");
-      // snprintf (mt, 5, "%f", temperatura);
-      // snprintf (mh, 5, "%f", humedad);
-      snprintf (msg, 10, "%.1f/%.1f", temperatura, humedad);
-      Serial.println("Se genera string");
-      // strcat(msg,mt);
-      // Serial.println("------");
-      // Serial.print(msg);
-      // strcat(msg,"/");
-      // Serial.println("------");
-      // Serial.print(msg);  
-      // strcat(msg,mh);
-      // Serial.println("------");
-      // Serial.print(msg);
-      Serial.print("El mensaje es: ");
-      Serial.print( msg);
-      /* publish the message */
-      client.publish(TOPIC, msg);
-      Serial.print("Se publico por mqtt");
-    }
-    // if (!isnan(humedad))
-    // {
-    //   snprintf (msg, 20, "%lf", humedad);
-    //   /* publish the message */
-    //   client.publish(HUM_TOPIC, msg);
-    // }
+    snprintf (msg, 10, "%.1f/%.1f", temperatura, humedad);
+    Serial.print("El mensaje es: ");
+    Serial.println(msg);
+    /* publish the message */
+    client.publish(TOPIC, msg);
   }
-  Serial.print("Se va a dormir");
-  // esp_deep_sleep_start();
-  delay(5000);
+  Serial.println("Se va a dormir");
+  esp_deep_sleep_start();
+  // delay(30000);
 }
