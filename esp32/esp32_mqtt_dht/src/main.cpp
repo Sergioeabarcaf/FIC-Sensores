@@ -18,7 +18,7 @@ So it willpublish temperature topic and scribe topic bulb on/off
 #define WIFI_PASSWORD "protein-dis3d"
 /***************Factores para Sleep*******************************************/
 #define uS_TO_S_FACTOR 1000000  /* Conversion factor for micro seconds to seconds */
-#define TIME_TO_SLEEP  30        /* Time ESP32 will go to sleep (in seconds) */
+#define TIME_TO_SLEEP  60        /* Time ESP32 will go to sleep (in seconds) */
 
 
 /* this is the IP of PC/raspberry where you installed MQTT Server
@@ -39,6 +39,11 @@ PubSubClient client(espClient);
 
 /*LED GPIO pin*/
 const char led = 12;
+const char ledWifi = 21;
+const char ledMqtt = 22;
+const char ledSend = 23;
+
+int i = 0;
 
 /* topics */
 // El topico debe ser invernadero/"zona":"numero del dispositivo"
@@ -70,47 +75,64 @@ void receivedCallback(char* topic, byte* payload, unsigned int length) {
 void mqttconnect() {
   /* Loop until reconnected */
   while (!client.connected()) {
+    digitalWrite(ledMqtt, HIGH);
+    delay(250);
+    digitalWrite(ledMqtt, LOW);
+    delay(250);
     Serial.println("MQTT connecting ...");
     /* client ID */
     String clientId = "ESP32Client";
     /* connect now */
     if (client.connect(clientId.c_str())) {
       Serial.println("connected");
+      digitalWrite(ledMqtt, HIGH);
       /* subscribe topic with default QoS 0*/
       //client.subscribe(LED_TOPIC);
     } else {
       Serial.println("failed, status code =");
       Serial.println(client.state());
-      Serial.println("try again in 5 seconds");
-      /* Wait 5 seconds before retrying */
-      delay(5000);
+      Serial.println("try again in 1 seconds");
+      digitalWrite(ledMqtt, LOW);
+      /* Wait 1 seconds before retrying */
+      delay(1000);
     }
   }
 }
 
 void setup()
 {
+  pinMode(ledWifi, OUTPUT);
+  pinMode(ledMqtt, OUTPUT);
+  pinMode(ledSend, OUTPUT);
+  pinMode(led, OUTPUT);
+
   Serial.begin(115200);
   // We start by connecting to a WiFi network
   Serial.println();
   Serial.println("Connecting to ");
   Serial.println(WIFI_SSID);
+  // Alerta con led
+  digitalWrite(ledWifi, HIGH);
+  delay(250);
+  digitalWrite(ledWifi, LOW);
 
   //WiFi.begin(ssid, password);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
   while (WiFi.status() != WL_CONNECTED)
   {
-    delay(500);
+    digitalWrite(ledWifi, HIGH);
+    delay(250);
+    digitalWrite(ledWifi, LOW);
+    delay(250);
     Serial.print(".");
-  }
-  /* set led as output to control led on-off */
-  pinMode(led, OUTPUT);
+  }  
 
   Serial.println("");
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+  digitalWrite(ledWifi, HIGH);
 
   /* configure the MQTT server with IPaddress and port */
   client.setServer(mqtt_server, 1883);
@@ -147,8 +169,19 @@ void loop()
     Serial.println(msg);
     /* publish the message */
     client.publish(TOPIC, msg);
+    i = 0;
+    while(i < 5) {
+      digitalWrite(ledSend, HIGH);
+      delay(500);
+      digitalWrite(ledSend, LOW);
+      delay(500);
+      i++;
+    }
   }
   Serial.println("Se va a dormir");
+  digitalWrite(ledWifi, LOW);
+  digitalWrite(ledMqtt, LOW);
+  digitalWrite(ledSend, LOW);
   esp_deep_sleep_start();
   // delay(30000);
 }
