@@ -56,6 +56,7 @@ def on_message(client, userdata, message):
             # almacenar dato de respaldo
             backupData.saveBackup(dataCurrent)
     except:
+        txtFile.logError(timeData.getTimestamp(), sys.exc_info()[0], sys.exc_info()[1])
         print sys.exc_info()[0]
         print "=========="
         print sys.exc_info()[1]
