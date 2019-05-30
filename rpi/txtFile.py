@@ -28,3 +28,11 @@ def newDay(date):
     # Cerrar archivo y retornar nombre para almacenar sensores
     f.close()
     return name
+
+# Funcion para almacenar los log de errores con su timestamp
+def logError(timestamp, type, arg):
+    f = open("logError.txt","a")
+    line = str(timestamp) + " - " + str(type) + " - " + str(arg)
+    f.write(line + "\n")
+    f.close()
+    return True
