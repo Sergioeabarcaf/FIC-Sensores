@@ -18,7 +18,7 @@ So it willpublish temperature topic and scribe topic bulb on/off
 #define WIFI_PASSWORD "protein-dis3d"
 /***************Factores para Sleep*******************************************/
 #define uS_TO_S_FACTOR 1000000  /* Conversion factor for micro seconds to seconds */
-#define TIME_TO_SLEEP  60        /* Time ESP32 will go to sleep (in seconds) */
+#define TIME_TO_SLEEP  300        /* Time ESP32 will go to sleep (in seconds) */
 
 
 /* this is the IP of PC/raspberry where you installed MQTT Server
@@ -64,10 +64,10 @@ void receivedCallback(char* topic, byte* payload, unsigned int length) {
   Serial.println();
   /* we got '1' -> on */
   if ((char)payload[0] == '1') {
-    digitalWrite(led, HIGH);
+    // digitalWrite(led, HIGH);
   } else {
     /* we got '0' -> on */
-    digitalWrite(led, LOW);
+    // digitalWrite(led, LOW);
   }
 
 }
@@ -75,24 +75,24 @@ void receivedCallback(char* topic, byte* payload, unsigned int length) {
 void mqttconnect() {
   /* Loop until reconnected */
   while (!client.connected()) {
-    digitalWrite(ledMqtt, HIGH);
-    delay(250);
-    digitalWrite(ledMqtt, LOW);
-    delay(250);
+    // digitalWrite(ledMqtt, HIGH);
+    // delay(250);
+    // digitalWrite(ledMqtt, LOW);
+    // delay(250);
     Serial.println("MQTT connecting ...");
     /* client ID */
     String clientId = "ESP32Client";
     /* connect now */
     if (client.connect(clientId.c_str())) {
       Serial.println("connected");
-      digitalWrite(ledMqtt, HIGH);
+      // digitalWrite(ledMqtt, HIGH);
       /* subscribe topic with default QoS 0*/
       //client.subscribe(LED_TOPIC);
     } else {
       Serial.println("failed, status code =");
       Serial.println(client.state());
       Serial.println("try again in 1 seconds");
-      digitalWrite(ledMqtt, LOW);
+      // digitalWrite(ledMqtt, LOW);
       /* Wait 1 seconds before retrying */
       delay(1000);
     }
@@ -112,27 +112,28 @@ void setup()
   Serial.println("Connecting to ");
   Serial.println(WIFI_SSID);
   // Alerta con led
-  digitalWrite(ledWifi, HIGH);
-  delay(250);
-  digitalWrite(ledWifi, LOW);
+  // digitalWrite(ledWifi, HIGH);
+  // delay(250);
+  // digitalWrite(ledWifi, LOW);
 
   //WiFi.begin(ssid, password);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
   while (WiFi.status() != WL_CONNECTED)
   {
-    digitalWrite(ledWifi, HIGH);
-    delay(250);
-    digitalWrite(ledWifi, LOW);
-    delay(250);
+    // digitalWrite(ledWifi, HIGH);
+    // delay(250);
+    // digitalWrite(ledWifi, LOW);
+    // delay(250);
     Serial.print(".");
+    delay(500);
   }  
 
   Serial.println("");
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
-  digitalWrite(ledWifi, HIGH);
+  // digitalWrite(ledWifi, HIGH);
 
   /* configure the MQTT server with IPaddress and port */
   client.setServer(mqtt_server, 1883);
@@ -169,19 +170,19 @@ void loop()
     Serial.println(msg);
     /* publish the message */
     client.publish(TOPIC, msg);
-    i = 0;
-    while(i < 5) {
-      digitalWrite(ledSend, HIGH);
-      delay(500);
-      digitalWrite(ledSend, LOW);
-      delay(500);
-      i++;
-    }
+    // i = 0;
+    // while(i < 5) {
+    //   digitalWrite(ledSend, HIGH);
+    //   delay(500);
+    //   digitalWrite(ledSend, LOW);
+    //   delay(500);
+    //   i++;
+    // }
   }
   Serial.println("Se va a dormir");
-  digitalWrite(ledWifi, LOW);
-  digitalWrite(ledMqtt, LOW);
-  digitalWrite(ledSend, LOW);
+  // digitalWrite(ledWifi, LOW);
+  // digitalWrite(ledMqtt, LOW);
+  // digitalWrite(ledSend, LOW);
   esp_deep_sleep_start();
   // delay(30000);
 }
