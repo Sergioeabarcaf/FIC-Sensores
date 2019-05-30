@@ -23,8 +23,8 @@ def on_message(client, userdata, message):
             'id': int(auxTopic[1]),
             'position': str(auxTopic[0]),
             'timestamp': timeData.getTimestamp(),
-            'tem': int(auxMessage[0]),
-            'hum': int(auxMessage[1])
+            'tem': float(auxMessage[0]),
+            'hum': float(auxMessage[1])
         }
 
         # ======================================================
